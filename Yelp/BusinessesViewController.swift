@@ -12,14 +12,16 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
 
     var businesses: [Business]!
     var searchBar: UISearchBar!
+    var filteredSearch: String?
     
     
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+       
         searchBar = UISearchBar()
+        searchBar.delegate = self
         searchBar.sizeToFit()
         
         // the UIViewController comes with a navigationItem property
@@ -48,19 +50,32 @@ class BusinessesViewController: UIViewController, UITableViewDataSource, UITable
         })
         
        
-       //Example of Yelp search with more search options specified
-        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+//       //Example of Yelp search with more search options specified
+//        Business.searchWithTerm("Restaurants", sort: .Distance, categories: ["asianfusion", "burgers"], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
+//            self.businesses = businesses
+//            
+//            for business in businesses {
+//                print(business.name!)
+//                print(business.address!)
+//            }
+//        }
+    
+
+    }
+
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredSearch = searchBar.text
+        Business.searchWithTerm(filteredSearch!, sort: .Distance, categories: [], deals: true) { (businesses: [Business]!, error: NSError!) -> Void in
             self.businesses = businesses
-            
+            self.tableView.reloadData()
             for business in businesses {
                 print(business.name!)
                 print(business.address!)
             }
         }
-    
-
     }
-
+    
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
